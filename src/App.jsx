@@ -36,7 +36,7 @@ export const App = () => {
 
   useEffect(() => {
     window.localStorage.setItem("FeedBacks", JSON.stringify(FeedBacks));
-  });
+  }, [FeedBacks]);
 
   const Reset = () => {
     setFeedBacks({
