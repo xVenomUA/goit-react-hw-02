@@ -1,6 +1,5 @@
 import css from "./Feedback.module.css";
-export const Feedback = ({ data: { good, neutral, bad } }) => {
-  const total = good + neutral + bad;
+export const Feedback = ({ data: { good, neutral, bad }, total }) => {
   const totalPercent = Math.round(
     ((good + neutral) / (total)) * 100
   );

@@ -4,30 +4,31 @@ import css from "./App.module.css";
 import { Options } from "./components/Options/Options";
 import { useEffect, useState } from "react";
 import { Notification } from "./components/Notification/Notification";
-export const App = () => {
-  const getDataFromLocalstorage = () => {
-    return (
-      JSON.parse(window.localStorage.getItem("FeedBacks")) ?? {
-        good: 0,
-        neutral: 0,
-        bad: 0,
-      }
-    );
-  };
-  const [feedbacks, setFeedBacks] = useState(getDataFromLocalstorage);
 
-  const leaveFeedback = (name) => {
+const getDataFromLocalstorage = () => {
+  return (
+    JSON.parse(window.localStorage.getItem("FeedBacks")) ?? {
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    }
+  );
+};
+
+export const App = () => {
+  const [feedbacks, setFeedBacks] = useState(getDataFromLocalstorage);
+    useEffect(() => {
+      window.localStorage.setItem("FeedBacks", JSON.stringify(feedbacks));
+    }, [feedbacks]);
+
+  const leaveFeedbacks = (name) => {
     setFeedBacks({
       ...feedbacks,
       [name]: feedbacks[name] + 1,
     });
   };
 
-  useEffect(() => {
-    window.localStorage.setItem("FeedBacks", JSON.stringify(feedbacks));
-  }, [feedbacks]);
-
-  const resetFeedback = () => {
+  const resetFeedbacks = () => {
     setFeedBacks({
       good: 0,
       neutral: 0,
@@ -35,25 +36,22 @@ export const App = () => {
     });
   };
 
-  function totalFeedback() {
-    if (feedbacks.good + feedbacks.neutral + feedbacks.bad === 0) {
-      return false;
-    } else {
-      return true;
-    }
+  function getTotalFeedbacks() {
+    return feedbacks.good + feedbacks.neutral + feedbacks.bad;
   }
-  const totalResult = totalFeedback();
+
+  const totalFeedbacks = getTotalFeedbacks() ;
 
   return (
     <div className={css.app}>
       <Description />
       <Options
-        leaveFeedback={leaveFeedback}
-        showResetBtn={resetFeedback}
-        total={totalResult}
+        leaveFeedback={leaveFeedbacks}
+        resetFeedbacks={resetFeedbacks}
+        showResetBtn={totalFeedbacks > 0}
       />
-      {totalResult ? (
-        <Feedback data={feedbacks} />
+      {totalFeedbacks ? (
+        <Feedback data={feedbacks} total={totalFeedbacks} />
       ) : (
         <Notification />
       )}
